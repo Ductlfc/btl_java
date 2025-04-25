@@ -44,6 +44,7 @@ public class CenterPanel extends JPanel {
                     }
 
                     selectedCell = clickedCellPanel;
+                    clickedCellPanel.seLectPiece();
                     boardState = BoardState.PIECE_SELECTED;
                 }
             }
