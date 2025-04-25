@@ -6,7 +6,10 @@ public class CenterPanel extends JPanel {
 
     private BoardState boardState;
     private CellPanel selectedCell;
+<<<<<<< HEAD
 
+=======
+>>>>>>> a87cc762092c2847fbf1bae42803dd657be04f26
     public CenterPanel() {
         boardState = BoardState.NONE_SELECTED;
         boolean isWhite = true;
@@ -51,7 +54,10 @@ public class CenterPanel extends JPanel {
         selectedCell = null;
 
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> a87cc762092c2847fbf1bae42803dd657be04f26
     public void onClickCellPanel(int x, int y) {
 
 
@@ -91,6 +97,7 @@ public class CenterPanel extends JPanel {
             }
         }
         else if(boardState==BoardState.PIECE_SELECTED){
+<<<<<<< HEAD
             if(clickedCellPanel.isValidMove) {
                 if(selectedCell.currentChessPiece.type == PieceType.VUA && Math.abs(y - selectedCell.y) == 2) {
                     performCastling(x, y); // Thêm: Gọi hàm xử lý nhập thành
@@ -100,6 +107,14 @@ public class CenterPanel extends JPanel {
                     selectedCell.removePiece();
                 }
                 selectedCell = null;
+=======
+            if(clickedCellPanel.isValidMove){
+                //move
+                clickedCellPanel.AddImage(selectedCell.currentChessPiece);
+                selectedCell.removePiece();
+                selectedCell=null;
+                //chuyen trang thai ve 0 chon
+>>>>>>> a87cc762092c2847fbf1bae42803dd657be04f26
                 boardState = BoardState.NONE_SELECTED;
                 deSelectAllCells();
             }
@@ -109,7 +124,10 @@ public class CenterPanel extends JPanel {
             }
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> a87cc762092c2847fbf1bae42803dd657be04f26
     public void deSelectAllCells() {
         for(int i=0; i<8; i++) {
             for(int j=0; j<8; j++) {
@@ -117,6 +135,7 @@ public class CenterPanel extends JPanel {
             }
         }
     }
+<<<<<<< HEAD
 
     // SỬA: Đảm bảo Vua và Xe không bị đặt trùng sau nhập thành
     private void performCastling(int x, int y) {
@@ -147,6 +166,8 @@ public class CenterPanel extends JPanel {
     }
 
 
+=======
+>>>>>>> a87cc762092c2847fbf1bae42803dd657be04f26
     private void TotCheck(int x, int y) {
         ChessPiece thisPiece = boardCell[x][y].currentChessPiece;
         if(thisPiece.color==PieceColor.WHITE){
@@ -392,6 +413,7 @@ public class CenterPanel extends JPanel {
                 }
             }
         }
+<<<<<<< HEAD
         if (!thisPiece.hasMoved) {
             boolean kingside = checkCastling(x, y, true);
             boolean queenside = checkCastling(x, y, false);
@@ -519,12 +541,17 @@ public class CenterPanel extends JPanel {
         boardCell[x][rookDestY].currentChessPiece = tempRookDest;
 
         return kingSafe; // Chỉ cần vua an toàn ở ô đích, không quan tâm đến các ô đi qua
+=======
+>>>>>>> a87cc762092c2847fbf1bae42803dd657be04f26
     }
 
     private boolean checkValidCoordinate(int n){
         return n>=0 && n<8;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> a87cc762092c2847fbf1bae42803dd657be04f26
     private boolean checkValidCoordinate(int x, int y){
         return checkValidCoordinate(x)&&checkValidCoordinate(y);
     }
