@@ -6,50 +6,10 @@ public class CenterPanel extends JPanel {
 
     private BoardState boardState;
     private CellPanel selectedCell;
+    private boolean isWhiteTurn;
 
     public CenterPanel() {
-        boardState = BoardState.NONE_SELECTED;
-        boolean isWhite = true;
-        this.setLayout(new GridLayout(8, 8));
-        for(int i=0; i<8; i++) {
-            for(int j=0; j<8; j++) {
-                CellPanel cellPanel = new CellPanel(isWhite, i, j);
-                if(i==1 || i==6){
-                    cellPanel.AddImage(new ChessPiece(PieceType.TOT, i==1?PieceColor.BLACK : PieceColor.WHITE));
-                }
-                if(i==0 && (j==0 || j==7)){
-                    cellPanel.AddImage(new ChessPiece(PieceType.XE, PieceColor.BLACK));
-                }
-                if(i==7 && (j==0 || j==7)){
-                    cellPanel.AddImage(new ChessPiece(PieceType.XE, PieceColor.WHITE));
-                }
-                if(i==0 && (j==1 || j==6)){
-                    cellPanel.AddImage(new ChessPiece(PieceType.MA, PieceColor.BLACK));
-                }
-                if(i==7 && (j==1 || j==6)){
-                    cellPanel.AddImage(new ChessPiece(PieceType.MA, PieceColor.WHITE));
-                }
-                if(i==0 && (j==2 || j==5)){
-                    cellPanel.AddImage(new ChessPiece(PieceType.TUONG, PieceColor.BLACK));
-                }
-                if(i==7 && (j==2 || j==5)){
-                    cellPanel.AddImage(new ChessPiece(PieceType.TUONG, PieceColor.WHITE));
-                }
-                if(i==0 && (j==3 || j==4)){
-                    cellPanel.AddImage(new ChessPiece(j==3?PieceType.HAU : PieceType.VUA, PieceColor.BLACK));
-                }
-                if(i==7 && (j==3 || j==4)){
-                    cellPanel.AddImage(new ChessPiece(j==3?PieceType.VUA : PieceType.HAU, PieceColor.WHITE));
-                }
-
-                this.add(cellPanel);
-                boardCell[i][j] = cellPanel;
-                isWhite = !isWhite;
-            }
-            isWhite = !isWhite;
-        }
-        selectedCell = null;
-
+        creatBoard();
     }
 
     public void onClickCellPanel(int x, int y) {
@@ -61,30 +21,31 @@ public class CenterPanel extends JPanel {
         if(boardState==BoardState.NONE_SELECTED){
             deSelectAllCells();
             if(clickedCellPanel.currentChessPiece!=null){
-                switch(clickedCellPanel.currentChessPiece.type){
-                    case TOT -> {
-                        TotCheck(x,y);
+                if(checkRightChessPiece(clickedCellPanel.currentChessPiece)){
+                    switch(clickedCellPanel.currentChessPiece.type){
+                        case TOT -> {
+                            TotCheck(x,y);
+                        }
+                        case XE -> {
+                            XeCheck(x,y);
+                        }
+                        case MA -> {
+                            MaCheck(x,y);
+                        }
+                        case TUONG -> {
+                            TuongCheck(x,y);
+                        }
+                        case HAU -> {
+                            HauCheck(x,y);
+                        }
+                        case VUA -> {
+                            VuaCheck(x,y);
+                        }
                     }
-                    case XE -> {
-                        XeCheck(x,y);
-                    }
-                    case MA -> {
-                        MaCheck(x,y);
-                    }
-                    case TUONG -> {
-                        TuongCheck(x,y);
-                    }
-                    case HAU -> {
-                        HauCheck(x,y);
-                    }
-                    case VUA -> {
-                        VuaCheck(x,y);
-                    }
+
+                    selectedCell = clickedCellPanel;
+                    boardState = BoardState.PIECE_SELECTED;
                 }
-
-
-                selectedCell = clickedCellPanel;
-                boardState = BoardState.PIECE_SELECTED;
             }
             else {
 
@@ -92,16 +53,35 @@ public class CenterPanel extends JPanel {
         }
         else if(boardState==BoardState.PIECE_SELECTED){
             if(clickedCellPanel.isValidMove) {
+                if(selectedCell.currentChessPiece!=null){
+                    if(clickedCellPanel.currentChessPiece != null &&
+                            clickedCellPanel.currentChessPiece.color != selectedCell.currentChessPiece.color) {
+                        //attack
+                        System.out.println("attack");
+                        if(clickedCellPanel.currentChessPiece.type == PieceType.VUA){
+                            GameOver();
+                            return;
+                        }
+                    }
+                    else{
+                        //move
+                        System.out.println("move");
+                    }
+                }
+
                 if(selectedCell.currentChessPiece.type == PieceType.VUA && Math.abs(y - selectedCell.y) == 2) {
                     performCastling(x, y); // Thêm: Gọi hàm xử lý nhập thành
-                } else {
+                }
+                else {
                     clickedCellPanel.AddImage(selectedCell.currentChessPiece);
                     selectedCell.currentChessPiece.hasMoved = true; // Thêm: Đánh dấu quân cờ đã di chuyển
                     selectedCell.removePiece();
                 }
+
                 selectedCell = null;
                 boardState = BoardState.NONE_SELECTED;
                 deSelectAllCells();
+                isWhiteTurn = !isWhiteTurn;
             }
             else {
                 boardState = BoardState.NONE_SELECTED;
@@ -118,7 +98,6 @@ public class CenterPanel extends JPanel {
         }
     }
 
-    // SỬA: Đảm bảo Vua và Xe không bị đặt trùng sau nhập thành
     private void performCastling(int x, int y) {
         ChessPiece king = selectedCell.currentChessPiece;
         int kingOriginY = selectedCell.y;
@@ -405,7 +384,6 @@ public class CenterPanel extends JPanel {
         }
     }
 
-    // THÊM: Kiểm tra nếu ô bị chiếu bởi quân địch
     private boolean isCellUnderAttack(int x, int y, PieceColor defenderColor) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -420,7 +398,6 @@ public class CenterPanel extends JPanel {
         return false;
     }
 
-    // THÊM: kiểm tra cơ bản quân địch có thể tấn công ô (toX, toY) không
     private boolean isValidMoveWithoutColorCheck(int fromX, int fromY, int toX, int toY) {
         int dx = Math.abs(fromX - toX);
         int dy = Math.abs(fromY - toY);
@@ -527,5 +504,78 @@ public class CenterPanel extends JPanel {
 
     private boolean checkValidCoordinate(int x, int y){
         return checkValidCoordinate(x)&&checkValidCoordinate(y);
+    }
+
+    private boolean checkRightChessPiece(ChessPiece chessPiece){
+        if(isWhiteTurn){
+            return chessPiece.color == PieceColor.WHITE;
+        }
+        else return chessPiece.color == PieceColor.BLACK;
+    }
+
+    public void creatBoard(){
+        destroyBoard();
+        boardCell = new CellPanel[8][8];
+        boardState = BoardState.NONE_SELECTED;
+        boolean isWhite = true;
+        isWhiteTurn = true;
+        this.setLayout(new GridLayout(8, 8));
+        for(int i=0; i<8; i++) {
+            for(int j=0; j<8; j++) {
+                CellPanel cellPanel = new CellPanel(isWhite, i, j);
+                if(i==1 || i==6){
+                    cellPanel.AddImage(new ChessPiece(PieceType.TOT, i==1?PieceColor.BLACK : PieceColor.WHITE));
+                }
+                if(i==0 && (j==0 || j==7)){
+                    cellPanel.AddImage(new ChessPiece(PieceType.XE, PieceColor.BLACK));
+                }
+                if(i==7 && (j==0 || j==7)){
+                    cellPanel.AddImage(new ChessPiece(PieceType.XE, PieceColor.WHITE));
+                }
+                if(i==0 && (j==1 || j==6)){
+                    cellPanel.AddImage(new ChessPiece(PieceType.MA, PieceColor.BLACK));
+                }
+                if(i==7 && (j==1 || j==6)){
+                    cellPanel.AddImage(new ChessPiece(PieceType.MA, PieceColor.WHITE));
+                }
+                if(i==0 && (j==2 || j==5)){
+                    cellPanel.AddImage(new ChessPiece(PieceType.TUONG, PieceColor.BLACK));
+                }
+                if(i==7 && (j==2 || j==5)){
+                    cellPanel.AddImage(new ChessPiece(PieceType.TUONG, PieceColor.WHITE));
+                }
+                if(i==0 && (j==3 || j==4)){
+                    cellPanel.AddImage(new ChessPiece(j==3?PieceType.HAU : PieceType.VUA, PieceColor.BLACK));
+                }
+                if(i==7 && (j==3 || j==4)){
+                    cellPanel.AddImage(new ChessPiece(j==3?PieceType.VUA : PieceType.HAU, PieceColor.WHITE));
+                }
+
+                this.add(cellPanel);
+                boardCell[i][j] = cellPanel;
+                isWhite = !isWhite;
+            }
+            isWhite = !isWhite;
+        }
+        selectedCell = null;
+        this.revalidate();
+        this.repaint();
+    }
+
+    private void destroyBoard(){
+        this.removeAll();
+        this.repaint();
+    }
+
+    private void GameOver(){
+        Object message = "Game Over" + (isWhiteTurn ? "black win" : "white win");
+        String title = "Confirm";
+        int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+        if(reply == JOptionPane.YES_OPTION){
+            creatBoard();
+        }
+        else {
+            System.exit(0);
+        }
     }
 }

@@ -3,8 +3,8 @@ import java.awt.*;
 
 public class GameFrame extends JFrame {
         public static GameFrame Instance;
-        public TopPanel topPanel = new TopPanel();
         public CenterPanel centerPanel = new CenterPanel();
+        public TopPanel topPanel = new TopPanel(centerPanel);
         public GameFrame() {
             Instance = this;
             this.setTitle("Game cờ vua");
