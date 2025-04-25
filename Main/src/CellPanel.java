@@ -56,6 +56,9 @@ public class CellPanel extends JPanel {
     public void seLect() {
         this.setBackground(blueColor);
     }
+    public void seLectPiece() {
+        this.setBackground(greenColor);
+    }
     public void deSelect() {
         this.setBackground(originCellColor == PieceColor.WHITE?Color.WHITE:new Color(66, 68, 71));
         isValidMove = false;
