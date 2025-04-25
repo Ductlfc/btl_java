@@ -73,8 +73,17 @@ public class CenterPanel extends JPanel {
                     performCastling(x, y); // Thêm: Gọi hàm xử lý nhập thành
                 }
                 else {
-                    clickedCellPanel.AddImage(selectedCell.currentChessPiece);
-                    selectedCell.currentChessPiece.hasMoved = true; // Thêm: Đánh dấu quân cờ đã di chuyển
+                    // Kiểm tra phong hậu cho Tốt
+                    if (selectedCell.currentChessPiece.type == PieceType.TOT &&
+                            ((selectedCell.currentChessPiece.color == PieceColor.WHITE && x == 0) ||
+                                    (selectedCell.currentChessPiece.color == PieceColor.BLACK && x == 7))) {
+                        // Phong cấp Tốt thành Hậu cùng màu
+                        ChessPiece promotedPiece = new ChessPiece(PieceType.HAU, selectedCell.currentChessPiece.color);
+                        clickedCellPanel.AddImage(promotedPiece);
+                    } else {
+                        clickedCellPanel.AddImage(selectedCell.currentChessPiece);
+                    }
+                    selectedCell.currentChessPiece.hasMoved = true; // Đánh dấu quân cờ đã di chuyển
                     selectedCell.removePiece();
                 }
 
