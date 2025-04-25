@@ -519,7 +519,7 @@ public class CenterPanel extends JPanel {
         boardCell[x][rookDestY].currentChessPiece = tempRookDest;
 
         return kingSafe; // Chỉ cần vua an toàn ở ô đích, không quan tâm đến các ô đi qua
-    }
+    }//
 
     private boolean checkValidCoordinate(int n){
         return n>=0 && n<8;
